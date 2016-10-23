@@ -20,14 +20,14 @@ public class HeinzelnisseSQLiteConverter {
 
   public final static String CHARSET_IN = "ISO8859-1";
   public final static String CHARSET_OUT = "UTF-8";
-  public static final String FILE_IN = "/directory/to/heinzelliste.txt";
-  public static final String FILE_OUT = "/directory/to/heinzelliste_decode.txt";
-  public static final String DATABASE = "/directory/to/heinzelliste.db";
+  public static final String FILE_IN = "/home/ygriega/Dokumente/Entwicklung/heinzelnisse/heinzelliste.txt";
+  public static final String FILE_OUT = "/home/ygriega/Dokumente/Entwicklung/heinzelnisse/heinzelliste_decode.txt";
+  public static final String DATABASE = "/home/ygriega/Dokumente/Entwicklung/heinzelnisse/heinzelliste.db";
 
   public static void main(String[] args) {
 
     System.out.println("=====================================");
-    System.out.println("= Heinzelnisse SQLite Converter 0.1 =");
+    System.out.println("= Heinzelnisse SQLite Converter 0.2 =");
     System.out.println("=====================================");
     System.out.println();
 
@@ -46,7 +46,7 @@ public class HeinzelnisseSQLiteConverter {
       System.out.println("Creating database at: " + DATABASE);
       statement.executeUpdate("drop table if exists heinzelnisse");
       statement.executeUpdate(
-          "create virtual table heinzelnisse using fts4(id integer primary key, no_word text, no_gender text, no_optional text, no_other text, de_word text, de_gender text, de_optional text, de_other text, category text, grade text)");
+          "create virtual table heinzelnisse using fts4(id integer primary key, no_word text, no_gender text, no_optional text, no_other text, de_word text, de_gender text, de_optional text, de_other text, category text, grade text, tokenize=porter)");
 
       PreparedStatement preparedStatement = connection
           .prepareStatement("insert into heinzelnisse values( ?,?,?,?,?,?,?,?,?,?,? )");
@@ -63,12 +63,8 @@ public class HeinzelnisseSQLiteConverter {
         String[] oneEntryAsArray = line.split("\t");
         preparedStatement.setInt(1, wordIndex);
         System.out.println("Storing word " + wordIndex + ": " + oneEntryAsArray[0]);
-        for (int i = 2; i < 12; i++) {
-          if (oneEntryAsArray.length > i - 1) {
-            preparedStatement.setString(i, oneEntryAsArray[i - 2]);
-          } else {
-            break;
-          }
+        for (int i = 0; i < oneEntryAsArray.length; i++) {
+          preparedStatement.setString(i + 2, oneEntryAsArray[i]);
         }
         preparedStatement.executeUpdate();
 
