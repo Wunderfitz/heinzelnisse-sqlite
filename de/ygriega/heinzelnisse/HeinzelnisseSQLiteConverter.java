@@ -27,7 +27,7 @@ public class HeinzelnisseSQLiteConverter {
   public static void main(String[] args) {
 
     System.out.println("=====================================");
-    System.out.println("= Heinzelnisse SQLite Converter 0.2 =");
+    System.out.println("= Heinzelnisse SQLite Converter 0.3 =");
     System.out.println("=====================================");
     System.out.println();
 
@@ -48,6 +48,8 @@ public class HeinzelnisseSQLiteConverter {
       statement.executeUpdate(
           "create virtual table heinzelnisse using fts4(id integer primary key, no_word text, no_gender text, no_optional text, no_other text, de_word text, de_gender text, de_optional text, de_other text, category text, grade text, tokenize=porter)");
 
+      statement.executeUpdate("begin transaction");
+
       PreparedStatement preparedStatement = connection
           .prepareStatement("insert into heinzelnisse values( ?,?,?,?,?,?,?,?,?,?,? )");
 
@@ -64,7 +66,11 @@ public class HeinzelnisseSQLiteConverter {
         preparedStatement.setInt(1, wordIndex);
         System.out.println("Storing word " + wordIndex + ": " + oneEntryAsArray[0]);
         for (int i = 0; i < oneEntryAsArray.length; i++) {
-          preparedStatement.setString(i + 2, oneEntryAsArray[i]);
+          String wordToStore = oneEntryAsArray[i];
+          if (i == 1 || i == 5) {
+            wordToStore = "(" + wordToStore + ")";
+          }
+          preparedStatement.setString(i + 2, wordToStore);
         }
         preparedStatement.executeUpdate();
 
@@ -73,6 +79,9 @@ public class HeinzelnisseSQLiteConverter {
       }
       bufferedReader.close();
       bufferedWriter.close();
+
+      statement.executeUpdate("end transaction");
+
       connection.close();
 
     } catch (IOException e) {
