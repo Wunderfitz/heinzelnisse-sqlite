@@ -68,7 +68,9 @@ public class HeinzelnisseSQLiteConverter {
         for (int i = 0; i < oneEntryAsArray.length; i++) {
           String wordToStore = oneEntryAsArray[i];
           if (i == 1 || i == 5) {
-            wordToStore = "(" + wordToStore + ")";
+            if (!wordToStore.isEmpty()) {
+              wordToStore = "(" + wordToStore + ")";
+            }
           }
           preparedStatement.setString(i + 2, wordToStore);
         }
