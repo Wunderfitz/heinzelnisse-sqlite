@@ -27,7 +27,7 @@ public class HeinzelnisseSQLiteConverter {
   public static void main(String[] args) {
 
     System.out.println("=====================================");
-    System.out.println("= Heinzelnisse SQLite Converter 0.3 =");
+    System.out.println("= Heinzelnisse SQLite Converter 0.4 =");
     System.out.println("=====================================");
     System.out.println();
 
@@ -46,7 +46,7 @@ public class HeinzelnisseSQLiteConverter {
       System.out.println("Creating database at: " + DATABASE);
       statement.executeUpdate("drop table if exists heinzelnisse");
       statement.executeUpdate(
-          "create virtual table heinzelnisse using fts4(id integer primary key, no_word text, no_gender text, no_optional text, no_other text, de_word text, de_gender text, de_optional text, de_other text, category text, grade text, tokenize=porter)");
+          "create virtual table heinzelnisse using fts4(id integer primary key, no_word text, no_gender text, no_optional text, no_other text, de_word text, de_gender text, de_optional text, de_other text, category text, grade text, tokenize=unicode61 \"remove_diacritics=0\")");
 
       statement.executeUpdate("begin transaction");
 
